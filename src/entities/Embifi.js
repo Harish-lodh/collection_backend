@@ -10,11 +10,6 @@ module.exports = new EntitySchema({
       type: 'int',
       generated: 'increment',
     },
-    reportInfo: {
-      type: 'text',
-      nullable: true,
-      name: 'Report Info',
-    },
     createdAt: {
       type: 'date',
       nullable: true,
@@ -150,11 +145,11 @@ module.exports = new EntitySchema({
       scale: 2,
       name: 'EMI Amount',
     },
-    intrestRate: {
+    interestRate: {
       type: 'decimal',
       precision: 5,
       scale: 2,
-      name: 'Intrest Rate',
+      name: 'Interest Rate',
     },
     loanStatus: {
       type: 'varchar',

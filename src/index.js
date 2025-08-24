@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 async function startServer() {
   try {
     await AppDataSource.initialize();
-    console.log('✅ Connected to MySQL database with TypeORM!');
+    console.log('✅ Connected to MySQL database');
 
     app.listen(port, '0.0.0.0', () => {
       console.log(`Server running on http://localhost:${port}`);
