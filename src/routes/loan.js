@@ -33,6 +33,8 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       collectedBy,
       amount,
       amountInWords,
+      latitude,
+      longitude
     } = req.body;
 
     if (!loanId || !customerName || !vehicleNumber || !contactNumber || !paymentDate || !amount) {
@@ -60,6 +62,8 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       collectedBy: collectedBy ? String(collectedBy).trim() : null,
       amount: amountNum,
       amountInWords: amountInWords ? String(amountInWords).trim() : null,
+      latitude:latitude,
+      longitude:longitude
     });
 
     const result = await loanRepository.save(loan);

@@ -53,6 +53,16 @@ module.exports = new EntitySchema({
       length: 256,
       nullable: true,
     },
+      latitude: {
+      type: 'varchar',
+      length: 256,
+      nullable: false,
+    },
+          longitude: {
+      type: 'varchar',
+      length: 256,
+      nullable: false,
+    },
     createdAt: {
       type: 'timestamp',
       createDate: true,
