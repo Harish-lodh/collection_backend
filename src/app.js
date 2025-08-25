@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import loanRoutes from './routes/loan.js';
-import userDataRoutes from './routes/user-data.js';
+import embifiDataRoutes from './routes/embifi.js';
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(express.json({ limit: '1mb' }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.use('/auth', authRoutes);
-app.use('/', loanRoutes);
-app.use('/api', userDataRoutes);
+app.use('/loanDetails', loanRoutes);
+app.use('/embifi', embifiDataRoutes);
 
 export default app;

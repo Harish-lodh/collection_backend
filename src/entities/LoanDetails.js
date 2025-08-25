@@ -25,6 +25,10 @@ module.exports = new EntitySchema({
       type: 'varchar',
       length: 32,
     },
+    panNumber: {
+      type: 'varchar',
+      length: 64,
+    },
     paymentDate: {
       type: 'date',
     },
@@ -53,12 +57,12 @@ module.exports = new EntitySchema({
       length: 256,
       nullable: true,
     },
-      latitude: {
+    latitude: {
       type: 'varchar',
       length: 256,
       nullable: false,
     },
-          longitude: {
+    longitude: {
       type: 'varchar',
       length: 256,
       nullable: false,

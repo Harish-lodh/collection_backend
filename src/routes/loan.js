@@ -26,6 +26,7 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       loanId,
       customerName,
       vehicleNumber,
+      panNumber,
       contactNumber,
       paymentDate,
       paymentMode,
@@ -37,7 +38,7 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       longitude
     } = req.body;
 
-    if (!loanId || !customerName || !vehicleNumber || !contactNumber || !paymentDate || !amount) {
+    if (!loanId || !customerName || !vehicleNumber || !contactNumber || !paymentDate || !amount || panNumber) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -56,6 +57,7 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       customerName: String(customerName).trim(),
       vehicleNumber: String(vehicleNumber).trim(),
       contactNumber: String(contactNumber).trim(),
+      panNumber:panNumber,
       paymentDate: sqlDate,
       paymentMode: paymentMode ? String(paymentMode).trim() : null,
       paymentRef: paymentRef ? String(paymentRef).trim() : null,
