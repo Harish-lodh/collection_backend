@@ -264,5 +264,11 @@ module.exports = new EntitySchema({
       nullable: true,
       name: 'Total GPS Device Cost',
     },
+    imagePath: {
+      type: 'varchar',
+      length: 255,
+      nullable: true,
+      name: 'Image Path',
+    },
   },
 });

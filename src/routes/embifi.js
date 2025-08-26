@@ -6,8 +6,8 @@ const router = Router();
 
 
 router.get('/auto-fetch', async (req, res) => {
-  const { phoneNumber, panNumber, customerName } = req.body;
-
+  const { phoneNumber, panNumber, customerName } = req.query;
+ console.log(req.query)
   // Validate inputs
   if (!phoneNumber && !panNumber && !customerName) {
     return res.status(400).json({ error: 'Please provide at least one of phoneNumber, panNumber, or customerName.' });
@@ -56,7 +56,7 @@ router.get('/auto-fetch', async (req, res) => {
   }
 });
 
-router.get('/user-data', async (req, res) => {
+router.get('/user-Details',async (req, res) => {
   const { loanId, customerName } = req.query;
   console.log(req.query)
   if (!loanId && !customerName) {

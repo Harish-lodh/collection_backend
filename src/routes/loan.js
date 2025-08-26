@@ -3,7 +3,7 @@ import AppDataSource from '../config/database.js';
 import  LoanDetails  from '../entities/LoanDetails.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { normalizeToSqlDate } from '../utils/dateUtils.js';
-
+import { upload } from "../utils/upload.js";
 const router = Router();
 const loanRepository = AppDataSource.getRepository(LoanDetails);
 
@@ -20,7 +20,8 @@ router.get('/loans', authenticateToken, async (_req, res) => {
   }
 });
 
-router.post('/save-loan', authenticateToken, async (req, res) => {
+router.post('/save-loan',upload.single('image'), async (req, res) => {
+  
   try {
     const {
       loanId,
@@ -37,8 +38,9 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       latitude,
       longitude
     } = req.body;
-
-    if (!loanId || !customerName || !vehicleNumber || !contactNumber || !paymentDate || !amount || panNumber) {
+console.log(req.body)
+console.log("Uploaded File:", req.file); // Debug
+    if (!loanId || !customerName || !vehicleNumber || !contactNumber || !paymentDate || !amount || !panNumber) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -51,7 +53,7 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
     if (isNaN(amountNum)) {
       return res.status(400).json({ message: 'Amount must be a number' });
     }
-
+const imagePath = req.file ? req.file.path : null;
     const loan = loanRepository.create({
       loanId: String(loanId).trim(),
       customerName: String(customerName).trim(),
@@ -65,7 +67,8 @@ router.post('/save-loan', authenticateToken, async (req, res) => {
       amount: amountNum,
       amountInWords: amountInWords ? String(amountInWords).trim() : null,
       latitude:latitude,
-      longitude:longitude
+      longitude:longitude,
+      imagePath
     });
 
     const result = await loanRepository.save(loan);
