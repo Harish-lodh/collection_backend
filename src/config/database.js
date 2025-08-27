@@ -1,7 +1,7 @@
 // AppDataSource.js
 
 const { DataSource } = require('typeorm');
-const LoanDetails = require('../entities/LoanDetails');
+const LoanDetails = require('../entities/paymentsDetails');
 const User = require('../entities/User');
 const Embifi = require('../entities/Embifi'); // This must also be an EntitySchema!
 const dotenv = require('dotenv');

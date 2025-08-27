@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
-import loanRoutes from './routes/loan.js';
+import loanRoutes from './routes/payments.js';
 import embifiDataRoutes from './routes/embifi.js';
 
 const app = express();

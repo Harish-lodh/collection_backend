@@ -1,8 +1,8 @@
 const { EntitySchema } = require('typeorm');
 
 module.exports = new EntitySchema({
-  name: 'LoanDetails',
-  tableName: 'loan_details',
+  name: 'paymentsDetails',
+  tableName: 'payments_details',
   columns: {
     id: {
       primary: true,
@@ -66,6 +66,10 @@ module.exports = new EntitySchema({
       type: 'varchar',
       length: 256,
       nullable: false,
+    },
+    image: {
+      type: 'longblob',
+      nullable: false, 
     },
     createdAt: {
       type: 'timestamp',

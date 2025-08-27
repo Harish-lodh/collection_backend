@@ -1,15 +1,37 @@
 import { Router } from 'express';
 import AppDataSource from '../config/database.js';
-import  LoanDetails  from '../entities/LoanDetails.js';
+import paymentsDetails from '../entities/paymentsDetails.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { normalizeToSqlDate } from '../utils/dateUtils.js';
 import { upload } from "../utils/upload.js";
+import fs from 'fs/promises';
 const router = Router();
-const loanRepository = AppDataSource.getRepository(LoanDetails);
+const paymentsRepository = AppDataSource.getRepository(paymentsDetails);
 
-router.get('/loans', authenticateToken, async (_req, res) => {
+
+//get direct image
+router.get('/payments/:id/image', async (req, res) => {
   try {
-    const loans = await loanRepository.find({
+    const payment = await paymentsRepository.findOne({
+      where: { id: parseInt(req.params.id) },
+    });
+
+    if (!payment || !payment.image) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    // 👇 set mime type (you may want to also save mimetype in DB)
+    res.setHeader("Content-Type", "image/jpeg");
+    res.send(payment.image); // <-- sends the raw buffer
+  } catch (err) {
+    console.error("Error fetching image:", err);
+    res.status(500).json({ message: "Error fetching image" });
+  }
+});
+
+router.get('/loans', async (_req, res) => {
+  try {
+    const loans = await paymentsRepository.find({
       order: { id: 'DESC' },
       take: 20,
     });
@@ -20,8 +42,8 @@ router.get('/loans', authenticateToken, async (_req, res) => {
   }
 });
 
-router.post('/save-loan',upload.single('image'), async (req, res) => {
-  
+router.post('/save-loan', upload.single('image'), async (req, res) => {
+
   try {
     const {
       loanId,
@@ -38,10 +60,13 @@ router.post('/save-loan',upload.single('image'), async (req, res) => {
       latitude,
       longitude
     } = req.body;
-console.log(req.body)
-console.log("Uploaded File:", req.file); // Debug
+    console.log(req.body)
+    console.log("Uploaded File:", req.file); // Debug
     if (!loanId || !customerName || !vehicleNumber || !contactNumber || !paymentDate || !amount || !panNumber) {
       return res.status(400).json({ message: 'Missing required fields' });
+    }
+      if (!req.file) {
+      return res.status(400).json({ message: 'Image is required' });
     }
 
     const sqlDate = normalizeToSqlDate(paymentDate);
@@ -53,25 +78,25 @@ console.log("Uploaded File:", req.file); // Debug
     if (isNaN(amountNum)) {
       return res.status(400).json({ message: 'Amount must be a number' });
     }
-const imagePath = req.file ? req.file.path : null;
-    const loan = loanRepository.create({
+     const imageBuffer = await fs.readFile(req.file.path);
+    const payments = paymentsRepository.create({
       loanId: String(loanId).trim(),
       customerName: String(customerName).trim(),
       vehicleNumber: String(vehicleNumber).trim(),
       contactNumber: String(contactNumber).trim(),
-      panNumber:panNumber,
+      panNumber: panNumber,
       paymentDate: sqlDate,
       paymentMode: paymentMode ? String(paymentMode).trim() : null,
       paymentRef: paymentRef ? String(paymentRef).trim() : null,
       collectedBy: collectedBy ? String(collectedBy).trim() : null,
       amount: amountNum,
       amountInWords: amountInWords ? String(amountInWords).trim() : null,
-      latitude:latitude,
-      longitude:longitude,
-      imagePath
+      latitude: latitude,
+      longitude: longitude,
+      image:imageBuffer,
     });
 
-    const result = await loanRepository.save(loan);
+    const result = await paymentsRepository.save(payments);
     return res.status(200).json({ message: 'Loan details saved successfully', insertId: result.id });
   } catch (err) {
     console.error('Error in /save-loan:', err);
