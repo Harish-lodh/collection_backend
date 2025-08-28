@@ -1,12 +1,15 @@
 import { Router } from 'express';
 import AppDataSource from '../config/database.js';
 import paymentsDetails from '../entities/paymentsDetails.js';
+import Image from '../entities/paymentsImage.js'
 import { authenticateToken } from '../middleware/auth.js';
 import { normalizeToSqlDate } from '../utils/dateUtils.js';
 import { upload } from "../utils/upload.js";
 import fs from 'fs/promises';
 const router = Router();
 const paymentsRepository = AppDataSource.getRepository(paymentsDetails);
+const paymentsImageRepository = AppDataSource.getRepository(Image);
+
 
 
 //get direct image
@@ -73,12 +76,18 @@ router.post('/save-loan', upload.single('image'), async (req, res) => {
     if (!sqlDate) {
       return res.status(400).json({ message: 'Invalid paymentDate format. Use YYYY-MM-DD.' });
     }
+if (['UPI', 'Cheque'].includes(paymentMode) && !paymentRef) {
+  return res.status(400).json({
+    message: 'Payment reference is required for UPI or Cheque payments',
+  });
+}
+
 
     const amountNum = Number(amount);
     if (isNaN(amountNum)) {
       return res.status(400).json({ message: 'Amount must be a number' });
     }
-     const imageBuffer = await fs.readFile(req.file.path);
+     
     const payments = paymentsRepository.create({
       loanId: String(loanId).trim(),
       customerName: String(customerName).trim(),
@@ -93,10 +102,19 @@ router.post('/save-loan', upload.single('image'), async (req, res) => {
       amountInWords: amountInWords ? String(amountInWords).trim() : null,
       latitude: latitude,
       longitude: longitude,
-      image:imageBuffer,
+      
     });
 
     const result = await paymentsRepository.save(payments);
+
+    // Save image in the images table
+   
+    const imageBuffer = await fs.readFile(req.file.path);
+    const image = paymentsImageRepository.create({
+      paymentId: result.id,
+      image: imageBuffer,
+    });
+    await paymentsImageRepository.save(image);
     return res.status(200).json({ message: 'Loan details saved successfully', insertId: result.id });
   } catch (err) {
     console.error('Error in /save-loan:', err);

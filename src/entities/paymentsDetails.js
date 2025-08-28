@@ -67,10 +67,6 @@ module.exports = new EntitySchema({
       length: 256,
       nullable: false,
     },
-    image: {
-      type: 'longblob',
-      nullable: false, 
-    },
     createdAt: {
       type: 'timestamp',
       createDate: true,

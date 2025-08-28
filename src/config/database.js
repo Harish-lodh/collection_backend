@@ -4,6 +4,7 @@ const { DataSource } = require('typeorm');
 const LoanDetails = require('../entities/paymentsDetails');
 const User = require('../entities/User');
 const Embifi = require('../entities/Embifi'); // This must also be an EntitySchema!
+const paymentImage=require('../entities/paymentsImage')
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -17,7 +18,7 @@ const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
-  entities: [LoanDetails, User, Embifi],
+  entities: [LoanDetails,paymentImage, User, Embifi],
   migrations: [],
   subscribers: [],
 });
